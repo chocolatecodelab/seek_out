@@ -141,4 +141,3 @@ module.exports = {
   dataOrangHilang,
 };
 
-module.exports = {};
