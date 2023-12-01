@@ -18,28 +18,6 @@ const routes = [
     },
     handler: sendPhotoHandler,
   },
-  {
-    method: "POST",
-    path: "/tambah-orang-hilang",
-    handler: tambahDataOrangHilangHandler, // Rute untuk menambah data orang hilang
-  },
-  {
-    method: "PUT",
-    path: "/edit-orang-hilang/{id}",
-    handler: editDataOrangHilangHandler, // Rute untuk mengedit data orang hilang
-  },
-  {
-    method: "DELETE",
-    path: "/hapus-orang-hilang/{id}",
-    handler: hapusDataOrangHilangHandler, // Rute untuk menghapus data orang hilang
-  },
-  {
-    method: "GET",
-    path: "/data-orang-hilang",
-    handler: (request, h) => {
-      return h.response({ data: dataOrangHilang }).code(200); // Rute untuk mendapatkan data orang hilang
-    },
-  },
 ];
 
 module.exports = routes;

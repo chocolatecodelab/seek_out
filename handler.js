@@ -62,83 +62,10 @@ const getAllDataMissingPerHandle = async () => {
   }
 };
 
-// Data penyimpanan sementara
-const dataOrangHilang = [];
 
-// Handler untuk menambah data orang hilang
-const tambahDataOrangHilangHandler = (request, h) => {
-  // Mendapatkan data dari payload permintaan
-  const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
-
-  // Membuat objek data baru
-  const newOrangHilang = {
-    nama,
-    umur,
-    tinggi,
-    beratBadan,
-    ciriFisik,
-    terakhirBertemu,
-    nomorDinas,
-    seringDitemukanDimana,
-    foto,
-    isKetemu,
-  };
-
-  // Menambahkan data baru ke dalam penyimpanan sementara
-  dataOrangHilang.push(newOrangHilang);
-
-  // Mengirim respons ke klien
-  return h.response({ message: "Data orang hilang berhasil ditambahkan", data: newOrangHilang }).code(201);
-};
-
-// Handler untuk mengedit data orang hilang
-const editDataOrangHilangHandler = (request, h) => {
-  // Mendapatkan ID data dari parameter URL
-  const orangHilangId = request.params.id;
-
-  // Mendapatkan data baru dari payload permintaan
-  const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
-
-  // Membuat objek data yang telah diedit
-  const editedOrangHilang = {
-    nama,
-    umur,
-    tinggi,
-    beratBadan,
-    ciriFisik,
-    terakhirBertemu,
-    nomorDinas,
-    seringDitemukanDimana,
-    foto,
-    isKetemu,
-  };
-
-  // Mengganti data lama dengan data yang telah diedit
-  dataOrangHilang[orangHilangId] = editedOrangHilang;
-
-  // Mengirim respons ke klien
-  return h.response({ message: "Data orang hilang berhasil diubah", data: editedOrangHilang }).code(200);
-};
-
-// Handler untuk menghapus data orang hilang
-const hapusDataOrangHilangHandler = (request, h) => {
-  // Mendapatkan ID data dari parameter URL
-  const orangHilangId = request.params.id;
-
-  // Menghapus data berdasarkan ID
-  const deletedData = dataOrangHilang.splice(orangHilangId, 1);
-
-  // Mengirim respons ke klien
-  return h.response({ message: "Data orang hilang berhasil dihapus", data: deletedData }).code(200);
-};
 
 module.exports = {
   sendPhotoHandler,
   getAllDataMissingPerHandle,
-  tambahDataOrangHilangHandler,
-  editDataOrangHilangHandler,
-  hapusDataOrangHilangHandler,
-  dataOrangHilang,
 };
 
-module.exports = {};
