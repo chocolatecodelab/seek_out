@@ -47,7 +47,8 @@ const sendPhotoHandler = async (request, h) => {
     }
 };
 
-const getPhotoHandler = async () => {
+// getAllData
+const getAllDataMissingPerHandle = async () => {
     try {
         const db = getFirestore();
         const missingPers = db.collection('MissingPersons');
@@ -64,4 +65,4 @@ const getPhotoHandler = async () => {
 
 
 
-module.exports = { sendPhotoHandler, getPhotoHandler };
+module.exports = { sendPhotoHandler, getAllDataMissingPerHandle };

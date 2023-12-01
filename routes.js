@@ -1,10 +1,10 @@
-const { sendPhotoHandler, getPhotoHandler } = require('./handler');
+const { sendPhotoHandler, getAllDataMissingPerHandle } = require('./handler');
 
 const routes = [
     {
         method: 'GET',
         path: '/find',
-        handler: getPhotoHandler
+        handler: getAllDataMissingPerHandle
     },
     {
         method: 'POST',
