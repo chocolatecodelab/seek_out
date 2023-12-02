@@ -5,7 +5,6 @@ const readdir = util.promisify(fs.readdir);
 const { initializeApp, applicationDefault, cert } = require("firebase-admin/app");
 const { getFirestore, Timestamp, FieldValue, Filter } = require("firebase-admin/firestore");
 const Joi = require("@hapi/joi");
-const { dataOrangHilang } = require("./dataOrangHilang");
 
 // send photo will be used for ML to folder images
 const sendPhotoHandler = async (request, h) => {
@@ -63,74 +62,85 @@ const getAllDataMissingPerHandle = async () => {
   }
 };
 
-// Data penyimpanan sementara
-const dataOrangHilang = [];
-
 // Handler untuk menambah data orang hilang
-const tambahDataOrangHilangHandler = (request, h) => {
-  // Mendapatkan data dari payload permintaan
-  const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
+const tambahDataOrangHilangHandler = async (request, h) => {
+  try {
+    const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
 
-  // Membuat objek data baru
-  const newOrangHilang = {
-    nama,
-    umur,
-    tinggi,
-    beratBadan,
-    ciriFisik,
-    terakhirBertemu,
-    nomorDinas,
-    seringDitemukanDimana,
-    foto,
-    isKetemu,
-  };
+    // Membuat objek data baru
+    const newOrangHilang = {
+      nama,
+      umur,
+      tinggi,
+      beratBadan,
+      ciriFisik,
+      terakhirBertemu,
+      nomorDinas,
+      seringDitemukanDimana,
+      foto,
+      isKetemu,
+    };
 
-  // Menambahkan data baru ke dalam penyimpanan sementara
-  dataOrangHilang.push(newOrangHilang);
+    // Menambahkan data baru ke dalam Firestore
+    const db = getFirestore();
+    const docRef = await db.collection("MissingPersons").add(newOrangHilang);
+    const newId = docRef.id;
 
-  // Mengirim respons ke klien
-  return h.response({ message: "Data orang hilang berhasil ditambahkan", data: newOrangHilang }).code(201);
+    // Mengirim respons ke klien
+    return h.response({ message: "Data orang hilang berhasil ditambahkan", data: { ...newOrangHilang, id: newId } }).code(201);
+  } catch (error) {
+    console.error("Error occurred while adding data:", error);
+    return h.response("Something went wrong while adding data").code(500);
+  }
 };
 
 // Handler untuk mengedit data orang hilang
-const editDataOrangHilangHandler = (request, h) => {
-  // Mendapatkan ID data dari parameter URL
-  const orangHilangId = request.params.id;
+const editDataOrangHilangHandler = async (request, h) => {
+  try {
+    const orangHilangId = request.params.id;
+    const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
 
-  // Mendapatkan data baru dari payload permintaan
-  const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
+    // Membuat objek data yang telah diedit
+    const editedOrangHilang = {
+      nama,
+      umur,
+      tinggi,
+      beratBadan,
+      ciriFisik,
+      terakhirBertemu,
+      nomorDinas,
+      seringDitemukanDimana,
+      foto,
+      isKetemu,
+    };
 
-  // Membuat objek data yang telah diedit
-  const editedOrangHilang = {
-    nama,
-    umur,
-    tinggi,
-    beratBadan,
-    ciriFisik,
-    terakhirBertemu,
-    nomorDinas,
-    seringDitemukanDimana,
-    foto,
-    isKetemu,
-  };
+    // Mengganti data lama dengan data yang telah diedit di Firestore
+    const db = getFirestore();
+    await db.collection("MissingPersons").doc(orangHilangId).set(editedOrangHilang);
 
-  // Mengganti data lama dengan data yang telah diedit
-  dataOrangHilang[orangHilangId] = editedOrangHilang;
-
-  // Mengirim respons ke klien
-  return h.response({ message: "Data orang hilang berhasil diubah", data: editedOrangHilang }).code(200);
+    // Mengirim respons ke klien
+    return h.response({ message: "Data orang hilang berhasil diubah", data: editedOrangHilang }).code(200);
+  } catch (error) {
+    console.error("Error occurred while editing data:", error);
+    return h.response("Something went wrong while editing data").code(500);
+  }
 };
 
 // Handler untuk menghapus data orang hilang
-const hapusDataOrangHilangHandler = (request, h) => {
-  // Mendapatkan ID data dari parameter URL
-  const orangHilangId = request.params.id;
+const hapusDataOrangHilangHandler = async (request, h) => {
+  try {
+    const orangHilangId = request.params.id;
 
-  // Menghapus data berdasarkan ID
-  const deletedData = dataOrangHilang.splice(orangHilangId, 1);
+    // Menghapus data dari Firestore berdasarkan ID
+    const db = getFirestore();
+    await db.collection("MissingPersons").doc(orangHilangId).delete();
 
-  // Mengirim respons ke klien
-  return h.response({ message: "Data orang hilang berhasil dihapus", data: deletedData }).code(200);
+    // Mengirim respons ke klien
+    return h.response({ message: "Data orang hilang berhasil dihapus" }).code(200);
+  } catch (error) {
+    console.error("Error occurred while deleting data:", error);
+    return h.response("Something went wrong while deleting data").code(500);
+  }
 };
 
 module.exports = {
@@ -139,6 +149,4 @@ module.exports = {
   tambahDataOrangHilangHandler,
   editDataOrangHilangHandler,
   hapusDataOrangHilangHandler,
-  dataOrangHilang,
 };
-
