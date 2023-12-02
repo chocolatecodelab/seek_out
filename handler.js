@@ -5,6 +5,7 @@ const readdir = util.promisify(fs.readdir);
 const { initializeApp, applicationDefault, cert } = require("firebase-admin/app");
 const { getFirestore, Timestamp, FieldValue, Filter } = require("firebase-admin/firestore");
 const Joi = require("@hapi/joi");
+const { dataOrangHilang } = require("./dataOrangHilang");
 
 // send photo will be used for ML to folder images
 const sendPhotoHandler = async (request, h) => {
