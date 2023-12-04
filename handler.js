@@ -65,20 +65,20 @@ const getAllDataMissingPerHandle = async () => {
 // Handler untuk menambah data orang hilang
 const tambahDataOrangHilangHandler = async (request, h) => {
   try {
-    const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
+    const { nama, umur, tinggi, berat_badan, ciri_fisik, terakhir_bertemu, nomor_dihubungi, sering_ditemukan_di, foto, isFound } = request.payload;
 
     // Membuat objek data baru
     const newOrangHilang = {
       nama,
       umur,
       tinggi,
-      beratBadan,
-      ciriFisik,
-      terakhirBertemu,
-      nomorDinas,
-      seringDitemukanDimana,
+      berat_badan,
+      ciri_fisik,
+      terakhir_bertemu,
+      nomor_dihubungi,
+      sering_ditemukan_di,
       foto,
-      isKetemu,
+      isFound,
     };
 
     // Menambahkan data baru ke dalam Firestore
@@ -98,25 +98,25 @@ const tambahDataOrangHilangHandler = async (request, h) => {
 const editDataOrangHilangHandler = async (request, h) => {
   try {
     const orangHilangId = request.params.id;
-    const { nama, umur, tinggi, beratBadan, ciriFisik, terakhirBertemu, nomorDinas, seringDitemukanDimana, foto, isKetemu } = request.payload;
+    const { nama, umur, tinggi, berat_badan, ciri_fisik, terakhir_bertemu, nomor_dihubungi, sering_ditemukan_di, foto, isFound } = request.payload;
 
     // Membuat objek data yang telah diedit
     const editedOrangHilang = {
       nama,
       umur,
       tinggi,
-      beratBadan,
-      ciriFisik,
-      terakhirBertemu,
-      nomorDinas,
-      seringDitemukanDimana,
+      berat_badan,
+      ciri_fisik,
+      terakhir_bertemu,
+      nomor_dihubungi,
+      sering_ditemukan_di,
       foto,
-      isKetemu,
+      isFound,
     };
 
     // Mengganti data lama dengan data yang telah diedit di Firestore
     const db = getFirestore();
-    await db.collection("MissingPersons").doc(orangHilangId).set(editedOrangHilang);
+    await db.collection("MissingPersons").doc(orangHilangId).update(editedOrangHilang);
 
     // Mengirim respons ke klien
     return h.response({ message: "Data orang hilang berhasil diubah", data: editedOrangHilang }).code(200);
